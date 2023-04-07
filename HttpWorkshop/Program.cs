@@ -16,6 +16,8 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         //ConfigureNamedServices(hostingContext, services);
 
+        //ConfigureLoginNamedServices(hostingContext, services);
+
         //ConfigurePollyServices(hostingContext, services);
 
         //ConfigureExerciseResultServices(hostingContext, services);
@@ -76,6 +78,16 @@ void ConfigureNamedServices(HostBuilderContext hostingContext, IServiceCollectio
     });
 
     services.AddHostedService<WorkerNamedHttpClient>();
+}
+
+void ConfigureLoginNamedServices(HostBuilderContext hostingContext, IServiceCollection services)
+{
+    services.AddHttpClient("LoginClient", client =>
+    {
+        client.BaseAddress = new Uri(hostingContext.Configuration.GetValue<string>("login_url"));
+    });
+
+    services.AddHostedService<WorkerLoginHttpClient>();
 }
 
 void ConfigureBaseServices(HostBuilderContext hostingContext, IServiceCollection services)
