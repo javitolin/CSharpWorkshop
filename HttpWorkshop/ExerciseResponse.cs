@@ -17,7 +17,7 @@ namespace HttpWorkshop
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var response = await _httpClient.GetAsync("/");
+            var response = await _httpClient.GetAsync("/hello");
             _logger.LogInformation(await response.Content.ReadAsStringAsync());
 
             response = await _httpClient.GetAsync("/start");

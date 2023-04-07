@@ -1,9 +1,16 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO.Abstractions;
+using System.Text.RegularExpressions;
 
 namespace FileSystem
 {
-    public class FinalExercise
+    public class FinalExerciseTestable
     {
+        private IFileSystem _fileSystem;
+        public FinalExerciseTestable(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
+
         private void ValidateInput(string directory, string regexPattern)
         {
             if (string.IsNullOrEmpty(directory))
@@ -16,7 +23,7 @@ namespace FileSystem
                 throw new ArgumentNullException(nameof(regexPattern));
             }
 
-            if (!Directory.Exists(directory))
+            if (!_fileSystem.Directory.Exists(directory))
             {
                 throw new DirectoryNotFoundException($"Directory [{directory}] not found");
             }
@@ -33,12 +40,12 @@ namespace FileSystem
 
         private bool CheckFileContentMatch(string filePath, Regex regex)
         {
-            if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+            if (string.IsNullOrWhiteSpace(filePath) || !_fileSystem.File.Exists(filePath))
             {
                 return false;
             }
 
-            foreach (var line in File.ReadLines(filePath))
+            foreach (var line in _fileSystem.File.ReadLines(filePath))
             {
                 if (regex.IsMatch(line))
                 {
@@ -50,13 +57,12 @@ namespace FileSystem
             return false;
         }
 
-
         public IEnumerable<string?> GetMatchesRecursive(string directory, string regexPattern)
         {
             ValidateInput(directory, regexPattern);
 
             Regex regex = new Regex(regexPattern);
-            foreach (var file in Directory.GetFiles(directory))
+            foreach (var file in _fileSystem.Directory.GetFiles(directory))
             {
                 if (CheckFileContentMatch(file, regex))
                 {
@@ -64,7 +70,7 @@ namespace FileSystem
                 }
             }
 
-            foreach (var innerDirectory in Directory.GetDirectories(directory))
+            foreach (var innerDirectory in _fileSystem.Directory.GetDirectories(directory))
             {
                 foreach (var match in GetMatchesRecursive(innerDirectory, regexPattern))
                 {
@@ -75,7 +81,7 @@ namespace FileSystem
 
         public IEnumerable<string> GetMatches(string directory, string regexPattern)
         {
-            ValidateInput(directory, regexPattern);            
+            ValidateInput(directory, regexPattern);
 
             Regex regex = new Regex(regexPattern);
             Stack<string> directories = new Stack<string>();
@@ -84,7 +90,7 @@ namespace FileSystem
             while (directories.Any())
             {
                 string currentDirectory = directories.Pop();
-                foreach (var file in Directory.GetFiles(currentDirectory))
+                foreach (var file in _fileSystem.Directory.GetFiles(currentDirectory))
                 {
                     if (CheckFileContentMatch(file, regex))
                     {
@@ -92,7 +98,7 @@ namespace FileSystem
                     }
                 }
 
-                foreach (var innerDirectory in Directory.GetDirectories(currentDirectory))
+                foreach (var innerDirectory in _fileSystem.Directory.GetDirectories(currentDirectory))
                 {
                     directories.Push(innerDirectory);
                 }

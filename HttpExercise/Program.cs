@@ -1,7 +1,6 @@
 using HttpExercise;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +14,7 @@ ConcurrentDictionary<Guid, UserRetries> users = new ConcurrentDictionary<Guid, U
 Random random = new Random();
 
 
-app.MapGet("/", () =>
+app.MapGet("/hello", () =>
 {
     return "Hello and welcome to this simple CTF! You'll need to answer the questions and point to the correct endpoint to get the next question. In order to start, just GET the fourth word in this sentence. Good luck!";
 });
@@ -186,6 +185,11 @@ app.MapGet("/Success/{uid}", async (HttpContext context) =>
 });
 
 
+app.MapGet("/", () =>
+{
+    return "Very good! You got / !";
+});
+
 app.MapGet("/randomAnswer", async (HttpContext context) =>
 {
     if (random.Next(1, 100) > 30)
@@ -200,9 +204,54 @@ app.MapGet("/randomAnswer", async (HttpContext context) =>
 
 });
 
-app.Run();
-
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
+app.MapPost("/login", async (HttpContext context) =>
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    try
+    {
+        Authentication? auth = await System.Text.Json.JsonSerializer.DeserializeAsync<Authentication>(context.Request.Body);
+        if (auth == null || string.IsNullOrEmpty(auth.username) || string.IsNullOrEmpty(auth.password))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("You shall not pass!");
+            return;
+        }
+
+        if (!auth.isValid())
+        {
+            context.Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+            await context.Response.WriteAsync("That password is weaker than a toddler!");
+            return;
+        }
+
+        var result = new
+        {
+            Message = $"Success",
+            Token = Guid.NewGuid().ToString()
+        };
+
+        var json = JsonConvert.SerializeObject(result);
+        await context.Response.WriteAsync(json);
+    }
+    catch
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await context.Response.WriteAsync("You've probaly gave me something fishy");
+    }
+});
+
+async Task HandleNotFound(HttpContext context)
+{
+    await context.Response.WriteAsync("That's unknown territory");
 }
+
+app.Use(async (context, next) =>
+{
+    await next();
+
+    if (context.Response.StatusCode == 404)
+    {
+        await HandleNotFound(context);
+    }
+});
+
+app.Run();

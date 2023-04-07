@@ -18,7 +18,7 @@ namespace FileSystem.FileWorkshop
             throw new NotImplementedException("TODO");
         }
 
-        public IEnumerable<string> GetFileContent(string path)
+        public /*TODO*/ void GetFileContent(string path)
         {
             throw new NotImplementedException("TODO");
         }

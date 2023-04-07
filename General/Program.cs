@@ -12,7 +12,7 @@ namespace General
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            var found = fe.GetMatches(@"C:\projects\CSharpWorkshop", "^[a-z]+$");
+            IEnumerable<string?> found = fe.GetMatches(@"C:\projects\CSharpWorkshop", "^[a-z]+$");
             foreach(var match in found)
             {
                 Console.WriteLine(match);
