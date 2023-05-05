@@ -50,7 +50,6 @@ namespace FileSystem
             return false;
         }
 
-
         public IEnumerable<string?> GetMatchesRecursive(string directory, string regexPattern)
         {
             ValidateInput(directory, regexPattern);
