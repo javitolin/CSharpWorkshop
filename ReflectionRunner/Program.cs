@@ -87,7 +87,7 @@ void CustomAttributeCheck()
 void ExerciseCheck()
 {
     Customer c = new Customer(123, "MyName", 18);
-    var serialized = c.Serialize();
+    var serialized = Serializer.Serialize(c);
     Console.WriteLine(serialized);
 }
 

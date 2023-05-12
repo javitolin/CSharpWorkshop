@@ -3,22 +3,24 @@ using System.Text;
 
 namespace AttributesReflectionExercise
 {
-    public abstract class BaseSerializer
+    public static class Serializer
     {
-        public string Serialize()
+        public static string Serialize<T>(T toSerialize)
         {
-            var properties = GetType().GetProperties()
-                .Where(prop => Attribute.IsDefined(prop, typeof(JsonPropertyAttribute)));
+            if (toSerialize == null) throw new ArgumentNullException(nameof(toSerialize));
+
+            var properties = toSerialize.GetType().GetProperties()
+                .Where(prop => Attribute.IsDefined(prop, typeof(CustomFormatProperty)));
 
             var response = new StringBuilder("{");
 
             foreach (var property in properties)
             {
-                var jsonAttr = property.GetCustomAttribute<JsonPropertyAttribute>();
-                var propertyName = jsonAttr.Name ?? property.Name;
-                var propertyValue = property.GetValue(this);
+                var jsonAttr = property.GetCustomAttribute<CustomFormatProperty>();
+                var propertyName = jsonAttr?.Name ?? property.Name;
+                var propertyValue = property.GetValue(toSerialize);
 
-                if (jsonAttr.Required && propertyValue == null)
+                if (jsonAttr != null && jsonAttr.Required && propertyValue == null)
                 {
                     throw new Exception($"Required property [{propertyName}] is null.");
                 }

@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AttributesReflectionExercis
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpServerWorkshop", "HttpServerWorkshop\HttpServerWorkshop.csproj", "{E823D5A3-40EA-4F34-831B-BCC78275749A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerDIExamples", "WorkerDIExamples\WorkerDIExamples.csproj", "{A0385498-59C0-4CB9-BC40-CC13CF31A7A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerDIExamples", "WorkerDIExamples\WorkerDIExamples.csproj", "{A0385498-59C0-4CB9-BC40-CC13CF31A7A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

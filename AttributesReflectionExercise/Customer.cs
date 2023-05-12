@@ -1,14 +1,14 @@
 ﻿namespace AttributesReflectionExercise
 {
-    public class Customer : BaseSerializer
+    public class Customer
     {
-        [JsonProperty("id", required: true)]
+        [CustomFormatProperty("id", required: true)]
         public int Id { get; set; }
 
-        [JsonProperty("name", required: true)]
+        [CustomFormatProperty("name", required: true)]
         public string Name { get; set; }
 
-        [JsonProperty("age", required: false)]
+        [CustomFormatProperty("age", required: false)]
         public int Age { get; set; }
 
         public Customer(int id, string name, int age)
